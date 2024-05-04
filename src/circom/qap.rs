@@ -84,6 +84,13 @@ impl R1CSToQAP for CircomReduction {
             .zip(c)
             .for_each(|(ab_i, c_i)| *ab_i -= &c_i);
 
+        // In the latest version of [ark-groth16](https://github.com/arkworks-rs/groth16/blob/8e5c347bd8776645e046ca7ec1e4b9ff4b97c054/src/prover.rs#L66),
+        // the last element of `h` (i.e., `ab` here) is ignored, maybe because
+        // the `h` returned by `LibsnarkReduction` always ends with zero.
+        // However, this is not the case for `CircomReduction`, so we manually
+        // add a zero element to the end of `ab` as a workaround.
+        ab.push(F::zero());
+
         Ok(ab)
     }
 
